@@ -26,7 +26,6 @@ def donate():
 
     return redirect(url_for('all'))
 
-
 @app.route('/donations/')
 def all():
     donations = Donation.select()
@@ -46,6 +45,12 @@ def login():
             return render_template('login.jinja2', error="Incorrect username or password.")
         return render_template('login.jinja2', error="Incorrect username or password.")
     return render_template('login.jinja2')
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop('user')
+    return redirect(url_for('login'))
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 6738))
