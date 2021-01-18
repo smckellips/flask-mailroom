@@ -8,6 +8,13 @@ from model import Donation, Donor
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY').encode()
+app.url_map.strict_slashes = False
+
+@app.before_request
+def clear_trailing():
+    rp = request.path 
+    if rp != '/' and rp.endswith('/'):
+        return redirect(rp[:-1])
 
 @app.route('/')
 def home():
@@ -26,10 +33,21 @@ def donate():
 
     return redirect(url_for('all'))
 
-@app.route('/donations/')
+@app.route('/donations')
 def all():
     donations = Donation.select()
     return render_template('donations.jinja2', donations=donations)
+
+@app.route('/filter', methods=['GET', 'POST'])
+def filter():
+    if request.method ==  'POST':
+        try:
+            name = request.form.get('name', None)
+            user = Donor.get(Donor.name == name)
+        except Donor.DoesNotExist:
+            return render_template('filter.jinja2', error="Incorrect username or password.")
+        return render_template('donations.jinja2', donations=Donation.select().where(Donation.donor == user))
+    return render_template('filter.jinja2')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
