@@ -1,7 +1,7 @@
 import random
 
 from model import db, Donor, Donation 
-
+from passlib.hash import pbkdf2_sha256
 db.connect()
 
 # This line will allow you "upgrade" an existing database by
@@ -10,13 +10,13 @@ db.drop_tables([Donor, Donation])
 
 db.create_tables([Donor, Donation])
 
-alice = Donor(name="Alice")
+alice = Donor(name="Alice", password=pbkdf2_sha256.hash("password"))
 alice.save()
 
-bob = Donor(name="Bob")
+bob = Donor(name="Bob", password=pbkdf2_sha256.hash("password"))
 bob.save()
 
-charlie = Donor(name="Charlie")
+charlie = Donor(name="Charlie", password=pbkdf2_sha256.hash("password"))
 charlie.save()
 
 donors = [alice, bob, charlie]

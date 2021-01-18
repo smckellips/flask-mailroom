@@ -1,3 +1,5 @@
 __pycache__/
 .idea/
 my_database.db
+py3/
+.vscode/
